@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FileUploadController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">CRUDspringMySQL</a> &gt; <a href="index.source.html" class="el_package">com.karle.CRUDspringMySQL.controller</a> &gt; <span class="el_source">FileUploadController.java</span></div><h1>FileUploadController.java</h1><pre class="source lang-java linenums">package com.karle.CRUDspringMySQL.controller;
+
+import java.io.BufferedInputStream;
+import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URLConnection;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import java.net.InetAddress;
+
+import com.karle.CRUDspringMySQL.exception.FileException;
+import com.karle.CRUDspringMySQL.model.ErrorResponse;
+import com.karle.CRUDspringMySQL.response.Response;
+//import com.karle.CRUDspringMySQL.CruDspringMySqlApplication;
+@RestController
+@CrossOrigin(origins = &quot;*&quot;, allowCredentials = &quot;true&quot;, allowedHeaders = &quot;*&quot;)
+@RequestMapping(&quot;/uploads&quot;)
+<span class="fc" id="L46">public class FileUploadController {</span>
+	
+
+
+	// method for uploading single file
+	@RequestMapping(value = &quot;/uploadFile&quot;, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public Response uploadFile(@RequestParam(&quot;file&quot;) MultipartFile file) {
+
+<span class="nc" id="L54">		File uploadedFile = new File(&quot;C:\\upload&quot;, file.getOriginalFilename());</span>
+		
+		try {
+<span class="nc" id="L57">			uploadedFile.createNewFile();</span>
+<span class="nc" id="L58">			FileOutputStream fileOutputStream = new FileOutputStream(uploadedFile);</span>
+<span class="nc" id="L59">			fileOutputStream.write(file.getBytes());</span>
+<span class="nc" id="L60">			fileOutputStream.close();</span>
+			
+			
+<span class="nc" id="L63">		} catch (IOException e) {</span>
+<span class="nc" id="L64">			e.printStackTrace();</span>
+<span class="nc" id="L65">		}</span>
+		
+		
+		
+<span class="nc" id="L69">		String status = &quot;File Uploaded Successfully&quot;;</span>
+		//String url = &quot;http://localhost:8080/downloads/downloadFile&quot;;
+<span class="nc" id="L71">		String url =   &quot;/uploads/downloadFile/&quot;+ file.getOriginalFilename();</span>
+<span class="nc" id="L72">		String filename = file.getOriginalFilename();</span>
+<span class="nc" id="L73">		String filetype = file.getContentType();</span>
+<span class="nc" id="L74">		return new Response(filename,filetype,status,url);	</span>
+		}
+
+	// method for uploading multiple files
+	@RequestMapping(value = &quot;/uploadmultipleFiles&quot;, method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public List&lt;Response&gt; uploadmultipleFile(@RequestParam(&quot;files&quot;) MultipartFile[] files) {
+<span class="nc" id="L80">		FileOutputStream fileOutputStream = null;</span>
+<span class="nc" id="L81">		List&lt;Response&gt; l1 = new ArrayList&lt;Response&gt;();</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">		for (MultipartFile multipartFile : files) {</span>
+
+<span class="nc" id="L84">			File uploadedFile = new File(&quot;C:\\upload&quot;, multipartFile.getOriginalFilename());</span>
+
+			try {
+<span class="nc" id="L87">				uploadedFile.createNewFile();</span>
+<span class="nc" id="L88">				fileOutputStream = new FileOutputStream(uploadedFile);</span>
+<span class="nc" id="L89">				fileOutputStream.write(multipartFile.getBytes());</span>
+<span class="nc" id="L90">				fileOutputStream.close();</span>
+<span class="nc" id="L91">				String status = &quot;File Uploaded Successfully&quot;;</span>
+<span class="nc" id="L92">				String url =&quot;/uploads/downloadFile/&quot;+ multipartFile.getOriginalFilename();</span>
+<span class="nc" id="L93">				String filename = multipartFile.getOriginalFilename();</span>
+<span class="nc" id="L94">				String filetype = multipartFile.getContentType();</span>
+<span class="nc" id="L95">				Response r = new Response(filename,filetype,status,url);</span>
+<span class="nc" id="L96">				l1.add(r);</span>
+<span class="nc" id="L97">			} catch (IOException e) {</span>
+<span class="nc" id="L98">				e.printStackTrace();</span>
+<span class="nc" id="L99">			}</span>
+
+		}
+		
+		
+
+<span class="nc" id="L105">		return l1  ;</span>
+	}
+
+	// method for downloading file
+	/*
+	 * @RequestMapping(value = &quot;/downloadFile/{fileName:.+}&quot;, method =
+	 * RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	 * public ResponseEntity&lt;Object&gt; downloadFile(@PathVariable String fileName,
+	 * HttpServletResponse response) {
+	 * 
+	 * String filePath = &quot;C:\\upload\\&quot; + fileName; Path path = Paths.get(filePath);
+	 * Resource resource = null;
+	 * 
+	 * try { resource = new UrlResource(path.toUri()); } catch
+	 * (MalformedURLException e) { e.printStackTrace(); }
+	 * 
+	 * if (resource.exists()) { return ResponseEntity.ok()
+	 * .header(HttpHeaders.CONTENT_DISPOSITION, &quot;attachment; filename=\&quot;&quot; +
+	 * resource.getFilename() + &quot;\&quot;&quot;) .body(resource);
+	 * 
+	 * 
+	 * 
+	 * //return new ResponseEntity&lt;Object&gt;(resource, HttpStatus.OK); } else { return
+	 * new ResponseEntity&lt;Object&gt;(&quot;File Not Found &quot;, HttpStatus.OK); } }
+	 * 
+	 */
+
+	// Try 1
+
+	/*
+	 * @RequestMapping(value = &quot;downloadFile/{fileName:.+}&quot;, method =
+	 * RequestMethod.GET) public StreamingResponseBody
+	 * getSteamingFile(HttpServletResponse response) throws IOException {
+	 * response.setContentType(&quot;text/csv&quot;);
+	 * response.setHeader(&quot;Content-Disposition&quot;,
+	 * &quot;attachment; filename=\&quot;EmployeeDetails.csv\&quot;&quot;); InputStream inputStream =
+	 * new FileInputStream(new File(&quot;C:\\upload\\EmployeeDetails.csv&quot;)); return
+	 * outputStream -&gt; { int nRead; byte[] data = new byte[1024]; while ((nRead =
+	 * inputStream.read(data, 0, data.length)) != -1) {
+	 * System.out.println(&quot;Writing some bytes..&quot;); outputStream.write(data, 0,
+	 * nRead); } }; }
+	 */
+
+	private static final String EXTERNAL_FILE_PATH = &quot;C:/upload/&quot;;
+
+	@RequestMapping(value = &quot;/downloadFile/{fileName:.+}&quot;)
+	public void downloadPDFResource(HttpServletRequest request, HttpServletResponse response,
+			@PathVariable(&quot;fileName&quot;) String fileName) throws IOException, FileException {
+
+<span class="nc" id="L154">		File file = new File(EXTERNAL_FILE_PATH + fileName);</span>
+<span class="nc bnc" id="L155" title="All 2 branches missed.">		if (file.exists()) {</span>
+
+			// get the mimetype
+<span class="nc" id="L158">			String mimeType = URLConnection.guessContentTypeFromName(file.getName());</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">			if (mimeType == null) {</span>
+				// unknown mimetype so set the mimetype to application/octet-stream
+<span class="nc" id="L161">				mimeType = &quot;application/octet-stream&quot;;</span>
+			}
+
+<span class="nc" id="L164">			response.setContentType(mimeType);</span>
+
+			/**
+			 * In a regular HTTP response, the Content-Disposition response header is a
+			 * header indicating if the content is expected to be displayed inline in the
+			 * browser, that is, as a Web page or as part of a Web page, or as an
+			 * attachment, that is downloaded and saved locally.
+			 * 
+			 */
+
+			/**
+			 * Here we have mentioned it to show inline
+			 */
+			// response.setHeader(&quot;Content-Disposition&quot;, String.format(&quot;inline; filename=\&quot;&quot;
+			// + file.getName() + &quot;\&quot;&quot;));
+
+			// Here we have mentioned it to show as attachment
+<span class="nc" id="L181">			response.setHeader(&quot;Content-Disposition&quot;, String.format(&quot;attachment; filename=\&quot;&quot; + file.getName() + &quot;\&quot;&quot;));</span>
+
+<span class="nc" id="L183">			response.setContentLength((int) file.length());</span>
+
+<span class="nc" id="L185">			InputStream inputStream = new BufferedInputStream(new FileInputStream(file));</span>
+
+<span class="nc" id="L187">			FileCopyUtils.copy(inputStream, response.getOutputStream());</span>
+
+<span class="nc" id="L189">		}</span>
+
+		else {
+<span class="nc" id="L192">			 throw new FileException(&quot;File not Found! Check the File Name again... &quot;);</span>
+		}
+<span class="nc" id="L194">	}</span>
+	@ExceptionHandler(FileException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; exceptionHandler(Exception ex) {
+<span class="nc" id="L197">        ErrorResponse error = new ErrorResponse();</span>
+<span class="nc" id="L198">        error.setErrorCode(HttpStatus.PRECONDITION_FAILED.value());</span>
+<span class="nc" id="L199">        error.setMessage(ex.getMessage());</span>
+<span class="nc" id="L200">        return new ResponseEntity&lt;ErrorResponse&gt;(error, HttpStatus.OK);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

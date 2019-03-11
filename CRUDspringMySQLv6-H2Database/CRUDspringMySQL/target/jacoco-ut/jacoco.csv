@@ -1,0 +1,12 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+CRUDspringMySQL,com.karle.CRUDspringMySQL,CruDspringMySqlApplication,5,3,0,0,2,1,1,1,1,1
+CRUDspringMySQL,com.karle.CRUDspringMySQL.controller,ExceptionFileUploadController,34,3,0,0,8,1,2,1,2,1
+CRUDspringMySQL,com.karle.CRUDspringMySQL.controller,SuccessFileUploadController,3,0,0,0,1,0,1,0,1,0
+CRUDspringMySQL,com.karle.CRUDspringMySQL.controller,EmployeeController,96,6,4,0,20,3,9,1,7,1
+CRUDspringMySQL,com.karle.CRUDspringMySQL.controller,FileUploadController,216,3,6,0,48,1,7,1,4,1
+CRUDspringMySQL,com.karle.CRUDspringMySQL.exception,EmployeeNotFound,23,0,0,0,10,0,5,0,5,0
+CRUDspringMySQL,com.karle.CRUDspringMySQL.exception,FileException,13,0,0,0,6,0,3,0,3,0
+CRUDspringMySQL,com.karle.CRUDspringMySQL.model,SuccessResponse,10,0,0,0,4,0,3,0,3,0
+CRUDspringMySQL,com.karle.CRUDspringMySQL.model,ErrorResponse,17,0,0,0,7,0,5,0,5,0
+CRUDspringMySQL,com.karle.CRUDspringMySQL.model,Employee,42,3,0,0,18,1,12,1,12,1
+CRUDspringMySQL,com.karle.CRUDspringMySQL.response,Response,46,0,0,0,19,0,10,0,10,0
